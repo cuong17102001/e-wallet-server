@@ -7,8 +7,8 @@ const router = express.Router();
 router.post('/register' , registerUser)
 router.post('/login' , loginUser)
 
-router.get("/" ,verifyToken, (req , res)=>{
-     res.json(req.userId)
+router.get("/" , (req , res)=>{
+     res.json("123123123")
 })
 
 
