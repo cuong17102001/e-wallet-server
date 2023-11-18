@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
         const token = jwt.sign({
             username : user.username,
             id : user._id
-        }, process.env.JWT_KEY , {expiresIn:"1h"})
+        }, process.env.JWT_KEY)
         res.status(200).json({user , token})
     } catch (error) {
         res.status(500).json({ message: error.message })

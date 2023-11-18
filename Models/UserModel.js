@@ -10,11 +10,7 @@ const UserSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        firstname: {
-            type: String,
-            required: true
-        },
-        lastname: {
+        fullname: {
             type: String,
             required: true
         },
@@ -23,14 +19,11 @@ const UserSchema = mongoose.Schema(
             default: false
         },
         profilePicture : String,
-        coverPicture : String,
         about : String,
-        livesin : String,
-        workAt : String,
-        relationship : String,
-        country : String,
-        followers : [],
-        following: []
+        money : {
+            type : Number,
+            default : 123123.12312
+        }
     },{
         timestamps : true
     }
