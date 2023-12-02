@@ -1,5 +1,51 @@
 import UserModel from "../Models/UserModel.js";
 import bcrypt from 'bcrypt'
+import HistoryModel from "../Models/History.js";
+
+export const postNapTien = async(req , res)=>{
+    const sotien = req.body.sotien;
+    const userid = req.params.id
+
+    const user = await UserModel.findById(userid)
+    
+
+    const addHistory = new HistoryModel({
+        userId : userid,
+        service : "Nạp tiền",
+        money : sotien,
+        sodu : user.money + sotien
+    }) 
+    await addHistory.save()
+    user.money = user.money + sotien
+
+    await user.updateOne({$set: user})
+
+    res.status(200).json(user)
+}
+
+export const postRutTien = async(req , res)=>{
+    const sotien = req.body.sotien;
+    const userid = req.params.id
+
+    const user = await UserModel.findById(userid)
+    
+    if (sotien > user.money) {
+       return res.status(400).json({message : "không đủ tiền"})
+    }
+
+    const addHistory = new HistoryModel({
+        userId : userid,
+        service : "Rút tiền",
+        money : sotien,
+        sodu : user.money - sotien
+    }) 
+    await addHistory.save()
+    user.money = user.money - sotien
+
+    await user.updateOne({$set: user})
+
+    res.status(200).json(user)
+}
 
 export const getUser = async(req , res)=>{
     const id = req.params.id
