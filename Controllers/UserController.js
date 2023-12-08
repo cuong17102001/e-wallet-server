@@ -2,6 +2,44 @@ import UserModel from "../Models/UserModel.js";
 import bcrypt from 'bcrypt'
 import HistoryModel from "../Models/History.js";
 
+export const chuyentien = async(req , res) =>{
+    const sendId = req.body.sendId
+    const reciverId = req.body.reciverId
+    const sotien = req.body.sotien
+    
+    const thongtinnguoigui = await UserModel.findById(sendId)
+    const thongtinnguoinhan = await UserModel.findById(reciverId)
+
+    if (thongtinnguoigui.money < sotien) {
+        return res.status(400).json({message : "không đủ tiền"})
+    }
+
+    thongtinnguoigui.money = thongtinnguoigui.money - sotien
+    thongtinnguoinhan.money = thongtinnguoinhan.money + sotien
+
+    const addHistorygui = new HistoryModel({
+        userId : sendId,
+        service : "Chuyển Tiền",
+        money : sotien,
+        sodu : thongtinnguoigui.money - sotien,
+        reciverId : reciverId
+    }) 
+
+    const addHistorynhan = new HistoryModel({
+        userId : reciverId,
+        service : "Chuyển Tiền",
+        money : sotien,
+        sodu : thongtinnguoigui.money - sotien,
+        reciverId : sendId
+    }) 
+    await addHistorygui.save()
+    await addHistorynhan.save()
+    await thongtinnguoigui.updateOne({$set: thongtinnguoigui})
+    await thongtinnguoinhan.updateOne({$set: thongtinnguoinhan})
+
+    res.status(200).json({message : "thành công"})
+}
+
 export const postNapTien = async(req , res)=>{
     const sotien = req.body.sotien;
     const userid = req.params.id
