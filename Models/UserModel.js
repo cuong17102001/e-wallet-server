@@ -22,7 +22,7 @@ const UserSchema = mongoose.Schema(
         about : String,
         money : {
             type : Number,
-            default : 123123.12312
+            default : 0
         }
     },{
         timestamps : true

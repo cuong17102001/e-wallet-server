@@ -15,13 +15,13 @@ export const chuyentien = async(req , res) =>{
     }
 
     thongtinnguoigui.money = thongtinnguoigui.money - sotien
-    thongtinnguoinhan.money = thongtinnguoinhan.money + sotien
+    thongtinnguoinhan.money = thongtinnguoinhan.money + parseFloat(sotien)
 
     const addHistorygui = new HistoryModel({
         userId : sendId,
         service : "Chuyển Tiền",
         money : sotien,
-        sodu : thongtinnguoigui.money - sotien,
+        sodu : thongtinnguoigui.money,
         reciverId : reciverId
     }) 
 
@@ -29,15 +29,24 @@ export const chuyentien = async(req , res) =>{
         userId : reciverId,
         service : "Chuyển Tiền",
         money : sotien,
-        sodu : thongtinnguoigui.money - sotien,
+        sodu : thongtinnguoinhan.money,
         reciverId : sendId
-    }) 
+    })
+
     await addHistorygui.save()
     await addHistorynhan.save()
     await thongtinnguoigui.updateOne({$set: thongtinnguoigui})
     await thongtinnguoinhan.updateOne({$set: thongtinnguoinhan})
 
-    res.status(200).json({message : "thành công"})
+    res.status(200).json({
+        senderId : thongtinnguoigui._id,
+        senderFullname : thongtinnguoigui.fullname,
+        sotiengiaodich : sotien,
+        reciverId : thongtinnguoinhan._id,
+        reciverFullname : thongtinnguoinhan.fullname,
+        time : Date.now(),
+        service : "Chuyển tiền"
+    })
 }
 
 export const postNapTien = async(req , res)=>{
